@@ -1,0 +1,332 @@
+.header{
+	z-index: 0;
+	cursor: pointer;
+}
+#modalBtn{
+    cursor: pointer;
+}
+#summary{
+	margin-top: 25px;
+	margin-bottom: 25px;
+}
+#summary p{
+	margin-bottom: 15px;
+    font-weight: bolder;
+    font-size: medium;
+}
+#summary #amount{
+    float:right;
+}
+#summary #constAmountContainer{
+    text-align: end;
+}
+#summary #constAmount{
+    font-size: small;
+    text-align: end;
+    width: 100%;
+}
+.main-menu-container .free-delivery-text,.main-menu-container .cart .cart-summary {
+    right: 10px;
+}
+.toCart{
+	cursor: pointer;
+    border-width: 0;
+    display: inline-block;
+    background-color: #13bd93;
+    color: #fff;
+    line-height: 34px;
+    font-size: 18px;
+    padding: 0 20px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    font-family: joey-bold,sans-serif;
+    box-shadow: 0 2px #109777;
+	margin-left: 20%;
+    margin-bottom: 20px;
+}
+#books{
+	height: 75%;
+	overflow-y: auto;
+}
+#books #name{
+
+    font-size: medium;
+    line-height: 1em;
+    height: 2em;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#books #nameShort{
+	font-weight: bolder;
+	font-size: medium;
+	font-weight: bolder;
+    font-size: medium;
+}
+#books #qContainer{
+	display: flex;
+  	gap: .5rem;
+}
+#books #price{
+    display: flex;
+    gap: 0.5rem;
+    font-size: medium;
+    float: right;
+    margin-right: 15px;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    align-items: flex-end;
+}
+#books #priceLess{
+	display: flex;
+  	gap: .5rem;
+    margin-right: 15px;
+
+	font-size: x-small;
+}
+#books #priceFlex{
+	display: flex;
+  	gap: .5rem;
+	font-size: medium;
+	margin-top: 20px;
+	float:right;
+    margin-right: 15px;
+
+    flex-direction: column;
+}
+#books #price #constPrice{
+    font-size: small;
+    color: gray;
+}
+#books #icons{
+	display: flex;
+  	gap: 0;
+	padding-top: 5px;
+    align-items: center;
+    justify-content: space-around;
+    width: 65px;
+}
+#books #img{
+	cursor: pointer;
+	float:left;
+	width:30%;
+	padding-right: 5px;
+}
+#books #form-container{
+	display:flex;
+	vertical-align: middle;
+}
+#books #form{
+	vertical-align: middle;
+}
+#books .type,#books #author{
+	padding-bottom: 5px;
+	vertical-align: middle;
+   
+}
+#quantity{
+    color: gray;
+    font-size: 12px;
+}
+#books #author{
+	padding-top: 10px;
+    padding-bottom: 10px;
+   
+}
+
+#author a{
+    color: gray;
+    font-size: 12px;
+}
+#books #img img{
+	padding-bottom: 5px;
+}
+#books #delete{
+    width: 20px;
+    height: 18px;
+	background:transparent url('https://static01.helion.com.pl/global/images/icon_delete.svg');
+	background-repeat: no-repeat;
+    background-size: contain;
+}
+#books .plus{
+	background: transparent url(https://static01.helion.com.pl/sensus/images/sensus.svg) no-repeat -90px -51px;
+}
+#books .minus{
+	background: transparent url(https://static01.helion.com.pl/sensus/images/sensus.svg) no-repeat -110px -51px;
+}
+#books .minus,#books .plus{
+	cursor: pointer;
+	display: inline-block;
+    width: 12px;
+    height: 12px;
+    text-indent: -10000px;
+    border: 1px solid #e4001e;
+}
+#books #favourite{
+    width: 24px;
+    height: 18px;
+	background:transparent url('https://static01.helion.com.pl/global/images/icon_favourite.svg');
+	background-repeat: no-repeat;
+    background-size: contain;
+}
+#books #favouriteActive{
+    width: 24px;
+    height: 18px;
+	background:transparent url('https://static01.helion.com.pl/global/images/icon_favourite_active.svg');
+	background-repeat: no-repeat;
+    background-size: contain;
+}
+#books #book{
+	float:left;
+	border-bottom: 1px solid grey;
+    width: 100%;
+	padding-bottom: 2vh;
+    padding-top: 2vh;
+}
+#books #book:last-child {
+	border-bottom: 0px;
+}
+#books #invoicePriceNetto{
+	float: left;
+    margin-right: 6px;
+}
+#headerContainer {
+    width: 1210px;
+    z-index: 26;
+    position: relative;
+}
+.TopBorderPanel {
+    border-right: 2px solid #662e6f!important;
+    z-index: 26;
+    position: relative;
+    width: 1210px;
+    height: 2px;
+    top: -3px;
+    left: -1px;
+}    
+
+#info,#info2{
+    margin-top: 25px;
+    background-color: #13bd93;
+    color: #ffffff;
+    font-size: large;
+    padding: 25px;
+    display: none;
+    align-content: stretch;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: nowrap;
+    
+}
+
+#info #text,#info2 #text{
+    margin-left: 1vw;
+    margin-top: 1vh;
+}
+#info #title,#info2 #title{
+    font-size: medium;
+    line-height: 1em;
+    height: 2em;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+#info #text2{
+    margin-left: 1vw;
+    margin-top: 1vh;
+}
+#info #text2 #title{
+    font-size: medium;
+    line-height: 1em;
+    height: 2em;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+.modalCart {
+  cursor: default;
+  display: none; 
+  position: fixed; 
+  z-index: 24; 
+  right: 0;
+  top: 0;
+  width: 321px; 
+  height: 100%; 
+  background-color: #fefefe;
+  color: #000000;
+  font-family: roboto,sans-serif;
+  font-size: medium;
+  margin: 0 auto;
+  padding: 20px;
+  border-left: 2px solid #662e6f;
+}
+
+.modalCart .toCart{
+    border-radius: 4px;
+    color: #fff;
+    padding: 5px 4px;
+
+    transition: all .2s ease-in-out;
+
+    box-shadow: 0 0 #10a37e;
+
+
+    font-size: 18px;
+    padding: 0 30px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    line-height: 48px;
+    height: 48px;
+
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: -11px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+@media only screen and (max-width: 1700px)  {
+    .modalCart {
+	    width: 25% !important;
+        z-index: 26;
+    }
+}
+@media only screen and (max-width: 900px)  {
+    .modalCart {
+	 width: 35% !important;
+    }
+}
+@media only screen and (max-width: 700px)  {
+    .modalCart {
+	    width: 50% !important;
+    }
+}
+@media only screen and (max-width: 500px)  {
+    .modalCart {
+	    width: 70% !important;
+    }
+}

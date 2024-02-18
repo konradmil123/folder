@@ -1,0 +1,161 @@
+
+
+function toggleFullSiteToMobile() {
+    var name="nomobile";
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    location.reload();
+};
+
+var success =  function(api){
+    data = api;
+    if(typeof data !== 'object'){
+        data = JSON.parse(data);
+    }
+        window._users = data;
+
+    if (data.ile > 0) {
+        $("#koszykbox").html(
+            data.ile
+        );
+        $("#koszykboxFixedHeader").html(
+            '<p class="fixed-header-price-count"><strong style="font-size:17px;">KOSZYK </strong>'
+            + data.suma +
+            ' (</p><p class="fixed-header-books-count">'
+            + data.ile +
+            '</p><p class="fixed-header-price-count">)</p>'
+        );
+    }
+
+    $("#ile-n-archiwum-ebook").html(" (" + data.biblioteka.ebooks + ")");
+    $("#ile-n-archiwum-audiobook").html(" (" + data.biblioteka.audiobooks + ")");
+    $("#ile-n-archiwum-kurs").html(" (" + data.biblioteka.courses + ")");
+    $("#ile-kurs-dodatki").html(" (" + data.biblioteka.addition + ")");
+    $(".ile-archiwum-ebook").html(" (" + data.archiwum.ebooks + ")");
+    $(".ile-archiwum-audiobook").html(" (" + data.archiwum.audiobooks + ")");
+    $(".ile-archiwum-kursy").html(" (" + data.archiwum.courses + ")");
+    $("#ile-prezenty").html(" (" + data.prezenty + ")");
+    $("#ile-kurs-materialy").html(" (" + data.materialy + ")");
+    $("#ile-sample").html(" (" + data.sample + ")");
+    if (data.login) {
+        if (data.sample > 0 && data.last_sample != "" && !$.cookie("hidesampleinfo")) {
+            $(".sample-info .sample-info-title").html(data.last_sample);
+            $(".sample-info").show();
+        }
+        ga("set", "&uid", data.uid);
+        ga("set", "dimension1", data.uid);
+        $("#userAccount").show();
+        $("#helloUser").html("Witaj <strong>"+data.name+"</strong>");
+        $(".your-profile-account").addClass("logged-in");
+        $(".login-links p").html(
+            "<a class='login-link' href='/users/logout'>Wyloguj się</a>"
+        );
+        $("#logOnMobile").html(
+            "<a class='login-link menuPozycjaMobil' href='/users/logout'>Wyloguj się</a>"
+        );
+        $("#userTwojeBiblioteka").html(
+            "<a href='#' class='menuPozycjaMobil' onclick='showUserMenuMobile(this)'>Twoja biblioteka</a>"
+        );
+        $("#userArchiwum").html(
+            "<a href='#' class='menuPozycjaMobil' onclick='showUserMenuMobile(this)'>Archiwum</a>"
+        );
+        $("#userPrezenty").html(
+            "<a href='/users/account/gifts' class='menuPozycjaMobil'>Prezenty <span id='ile-prezenty-mobile'></span></a>"
+        );
+        $("#ile-prezenty-mobile").html("(" + data.prezenty + ")");
+        $("#userTwojePolki").html(
+            "<a href='#' class='menuPozycjaMobil' onclick='showUserMenuMobile(this)'>Twoje półki</a>"
+        );
+        $("#userTwojeKonto").html(
+            "<a href='#' class='menuPozycjaMobil' onclick='showUserMenuMobile(this)'>Twoje konto</a>"
+        );
+        $("#userEdycjaKonta").html(
+            "<a href='#' class='menuPozycjaMobil' onclick='showUserMenuMobile(this)'>Edycja konta</a>"
+        );
+
+        if (data.biblioteka) {
+            if (data.biblioteka.ebooks == 0) {
+                $("#ile-n-archiwum-ebook2").closest("li").addClass("disable");
+            }
+            $("#ile-n-archiwum-ebook2").html("(" + data.biblioteka.ebooks + ")");
+
+            if (data.biblioteka.audiobooks == 0) {
+                $("#ile-n-archiwum-audiobook2").closest("li").addClass("disable");
+            }
+            $("#ile-n-archiwum-audiobook2").html("(" + data.biblioteka.audiobooks + ")");
+
+            if (data.biblioteka.courses == 0) {
+                $("#ile-n-archiwum-kurs2").closest("li").addClass("disable");
+            }
+            $("#ile-n-archiwum-kurs2").html("(" + data.biblioteka.courses + ")");
+        }
+
+        if (data.prezenty == 0) {
+            $("#ile-prezenty2").closest("li").addClass("disable");
+        }
+        $("#ile-prezenty2").html("(" + data.prezenty + ")");
+        
+        if (data.sample) {
+            $("#ile-sample2").html("(" + data.sample + ")");
+        } else {
+            $("#ile-sample2").closest("li").addClass("disable");
+        }
+    }
+}
+
+
+if(!("_users" in window)){
+
+    $.ajax({
+           url:'/api/users/info',
+        method: 'get',
+        success: success
+    });
+}else{
+    
+    success(window._users);
+}
+    
+
+// full email hiding
+const bookstore = window._bookstore;
+
+$("p:contains('@" + bookstore + "')").each(function(){
+    if($(this).html().indexOf("href")==-1){
+        const re = /\w+@\w+\.\w{2}/;
+        $(this).html($(this).html().replace(re,"<a href='mailto:\$&'>\$&</a>"));
+    }
+});
+    
+let hideEmail = function(email) {
+    return email.replace(/(.{0})(.*)(?=@)/,
+    function(gp1, gp2, gp3) {
+        for(let i = 0; i < gp3.length; i++) {
+            gp2+= "* ";
+        }
+        return "[wyświetl email]";
+     });
+};
+
+$('a[href^="mailto:"]').each(function() {
+    $(this).text(hideEmail($(this).text()))
+});
+
+$('a[href^="mailto:"]').each(function() {
+    $(this).on("click", function(e){
+        console.log($(this).attr('href').indexOf('?'));
+        if($(this).attr('href').indexOf('?')>-1){
+            if($(this).text()!=$(this).attr('href').substring(7,$(this).attr('href').indexOf('?'))){
+                $(this).text($(this).attr('href').substring(7,$(this).attr('href').indexOf('?')));
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+        else{
+            if($(this).text()!=$(this).attr('href').substring(7)){
+                $(this).text($(this).attr('href').substring(7));
+                e.preventDefault();
+                e.stopPropagation();
+            } 
+        }
+    });
+});

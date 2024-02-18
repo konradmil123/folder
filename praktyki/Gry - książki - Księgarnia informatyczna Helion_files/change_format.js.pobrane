@@ -1,0 +1,375 @@
+ $(document).ready(function(){
+    $(document).on('click', '.changeFormat', function(ev){
+        ev.preventDefault();
+        var ids = $(this).attr('ids');
+        var idspanel = $(this).attr('idspanel')?$(this).attr('idspanel'): ids;
+        var troya = $(this).attr('troya');
+        var status = $(this).attr('status');
+        var price = parseFloat($(this).attr('price'));
+        var constprice = parseFloat($(this).attr('constprice'));
+        var termin_end = $(this).attr('termin_end');
+        var pkt = $(this).attr('punkty');
+        var oszczedzasz = (((parseFloat(constprice.toFixed(2) - price.toFixed(2)).toFixed(2) / parseFloat(constprice.toFixed(2))))*100).toFixed(0);
+        var cover_bg = $("."+idspanel+"-link"+" p.cover");
+        var cover = $('img[ident='+idspanel+']');
+        var xfory_active = $(this).attr('xfory_active');
+        var termin_promo = $(this).attr('termin_promo');
+        if(xfory_active == 1){
+            cover_bg.addClass("cover-xfory");
+        }else{
+            cover_bg.removeClass("cover-xfory");
+        };
+        
+        var shared_cover_ebook = $(this).attr('shared_cover_ebook');
+        var shared_cover_audio = $(this).attr('shared_cover_audio');
+        var parent = $(this).parent('ul');
+        var isTester =  $(".isTester").html();
+        var link = "/zakupy/add.cgi?troya=";
+
+        var temat = $(this).attr('temat');
+
+        if (temat){
+            link = "/bannerclick-tematy-"+temat+"-"+ids+"/zakupy/add.cgi?id=";
+        }
+
+        var content ="";
+        var klasy = "";
+        var contentNotify = "";
+        $("#"+idspanel).siblings('.powiadomMnie').replaceWith(contentNotify);
+
+        if(status == 0){
+            content = "Niedostępna";
+            klasy="price";
+        }
+        else if(status == 1 ){
+            if(price < constprice){
+                link+=troya;
+
+                if(isTester == 1){
+
+                    content="<a class = \"addToCart\" troya=\""+troya+"\" rel=\"nofollow\"><ins> "+price.toFixed(2)+" zł </ins></a>\n<del><span style='padding-right:5px;'>" +constprice.toFixed(2)+"zł</span> (-" + oszczedzasz + "%)</del>";
+                }
+                else{
+                    content="<a href=\""+link+"\" rel=\"nofollow\"><ins> "+price.toFixed(2)+" zł </ins></a>\n<del><span style='padding-right:5px;'>" +constprice.toFixed(2)+"zł</span> (-" + oszczedzasz + "%)</del>";
+                }
+                klasy="price price-incart";
+            }
+            else{
+                link += troya;
+                if(isTester == 1){
+                    content ="<a class = \"addToCart\"  troya=\""+troya+"\" rel=\"nofollow\"> "+constprice.toFixed(2)+" zł </a>";
+                }
+                else{
+                    content="<a href=\""+link+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+                }
+                klasy="price price-add";
+            }
+        }
+        else if((status == 7) && termin_end != ''|| (status == 2 && termin_end != '')){
+            link += troya;
+            if(status == 7){
+                link='';
+            }
+            if(isTester == 1){
+                content="<a class = \"addToCart\" troya=\""+troya+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+            }
+            else{
+                content="<a href=\""+link+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+            }
+            content+="<time style=\"line-height:16px;\">Do " + termin_promo + "<br/>Oszczędzasz "+oszczedzasz+"%!<br/>\n W realizacji od "+termin_end+" r.</time>";
+            klasy="price price-time price-time-incart";
+        }
+        else if(status == 2){
+            content = "W przygotowaniu";
+            klasy = "price";
+            if($(".list-view-inner").length < 1){
+                contentNotify = "<a href=\"#\" class=\"powiadomMnie\" data-powiadom-info=\"infoemail\" data-powiadom-troya="+troya+" tabindex="+0+">Powiadom mnie, gdy książka będzie dostępna</a>";
+                $("#"+idspanel).after(contentNotify);
+            }
+        }
+        else if(status == 3){
+            content = "Czasowo niedostępna";
+            klasy="price";
+        }
+        $(this).addClass("active");
+        $(this).siblings().removeClass("active");
+        $("#"+idspanel).html(content);
+        $("#"+idspanel+'-points').html(pkt+" pkt");
+        if($(this).attr('lowestPrice')){
+            if(price < constprice  && status != 0  && status != 3){
+                $("#"+idspanel+'-lowestPrice').html('('+$(this).attr('lowestPrice')+' najniższa cena z 30 dni)');
+            }
+            else{
+                $("#"+idspanel+'-lowestPrice').html('');
+            }
+        }
+        $("#"+idspanel).attr("class", klasy);
+
+        var bookLinks = $("."+ids+"-link");
+        if(bookLinks.length == 0){
+            bookLinks = $("."+idspanel+"-link");
+        }
+        if(bookLinks.length>0){
+            var href = bookLinks[0].href;
+            if(href.indexOf("#")>-1){
+                href = href.substring(0,href.indexOf("#"));
+            }
+            if(troya.length>=8){
+                href = href + "#format/" + troya[7];
+            }
+            bookLinks.attr("href", href);
+        }
+
+        // cover change
+        if($(this).hasClass('type-audiobook') || $(this).hasClass('type-dvd')){
+            $("."+idspanel+"-link"+'.show-short-desc').addClass('show-short-desc-audio');
+            cover.attr('height', '145');
+            cover.attr('width', '145');
+           
+            if(cover.attr('cdcover') == "false"){
+                if(shared_cover_audio && shared_cover_audio !== ''){
+                    cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+                    cover.attr("src", cover.attr("src").replace(ids, shared_cover_audio+'_3'));
+                    parent.attr('shared', shared_cover_audio);
+                }else if(parent.attr('shared') && parent.attr('shared') != '' && parent.attr('shared') != ids){
+                    cover.attr("src", cover.attr("src").replace('sensus-brak',parent.attr('shared')));
+                    cover.attr("src", cover.attr("src").replace(parent.attr('shared'), ids+'_3'));
+                }else{
+                    cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+                    cover.attr("src", cover.attr("src").replace(ids, ids+'_3'));
+                };
+            }else{
+                //cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+                //cover.attr("src", cover.attr("src").replace(ids, ids+'_3'));
+            }
+           // cover.attr("data-src", cover.attr("src"));
+            cover.attr('cdcover', true);
+        } else{
+            if($("."+idspanel+"-link"+'.show-short-desc').length > 0){
+                $("."+idspanel+"-link"+'.show-short-desc').removeClass('show-short-desc-audio');
+            }
+            else{
+                $("."+ids+"-link"+'.show-short-desc').removeClass('show-short-desc-audio');
+            }
+            if(cover.attr("src") && (cover_bg.parents('.list').attr('id') != 'list4')){
+                cover.attr('height', '218');
+                cover.attr('width', '145');
+            }
+            if(cover.attr('cdcover') == "true") {
+                if(shared_cover_ebook && shared_cover_ebook !== ''){
+                    if(cover.attr("src").indexOf('_3') !== -1){
+                        cover.attr("src", cover.attr("src").replace(ids+'_3', shared_cover_ebook));
+                    }else{
+                        cover.attr("src", cover.attr("src").replace(ids, shared_cover_ebook));
+                    }
+                    parent.attr('shared', shared_cover_ebook);
+                }else if(parent.attr('shared') && parent.attr('shared') != '' && parent.attr('shared') != ids){
+                    if(cover.attr("src").indexOf('_3') !== -1){
+                        cover.attr("src", cover.attr("src").replace(parent.attr('shared')+'_3', ids));
+                    }else{
+                        cover.attr("src", cover.attr("src").replace(parent.attr('shared'), ids));
+                    }
+                }else{
+                    cover.attr("src", cover.attr("src").replace(ids+'_3', ids));
+                };
+            }
+
+            cover.attr('cdcover', false);
+        }
+    })
+ });
+
+ function changeAudioCover(elem,isAudio){
+    var ident = elem.getAttribute('ids');
+    var idspanel = elem.getAttribute('idspanel');
+    var cover = document.querySelector('img[ident="'+idspanel+'"]');
+    if(!cover) cover = document.querySelector('img[ident="'+ident+'"]');
+        if (!isAudio){
+            okladka = "https://static01.helion.com.pl/global/okladki/145x218/"+ident+".png";
+            cover.setAttribute('src', okladka);
+            cover.setAttribute('height','218');
+            cover.parentNode.parentNode.classList.remove('show-short-desc-audio');
+        } else {
+            okladka = "https://static01.helion.com.pl/global/okladki/145x218/"+ident+"_3.png";
+            cover.setAttribute('src', okladka);
+            cover.setAttribute('height','145');
+            cover.parentNode.parentNode.classList.add('show-short-desc-audio');
+            if(idspanel.split('-')[1] > 10000)
+                changeFormat($('.changeFormat.type-audiobook[idspanel="'+idspanel+'"]'))
+            
+        }
+}
+
+
+function changeFormat(elem){
+    var ids = elem.attr('ids');
+    var idspanel = elem.attr('idspanel')?elem.attr('idspanel'): ids;
+    var troya = elem.attr('troya');
+    var status = elem.attr('status');
+    var price = parseFloat(elem.attr('price'));
+    var constprice = parseFloat(elem.attr('constprice'));
+    var termin_end = elem.attr('termin_end');
+    var pkt = elem.attr('punkty');
+    var oszczedzasz = (((parseFloat(constprice.toFixed(2) - price.toFixed(2)).toFixed(2) / parseFloat(constprice.toFixed(2))))*100).toFixed(0);
+    var cover_bg = $("."+idspanel+"-link"+" p.cover");
+    var cover = $('img[ident='+idspanel+']');
+    var xfory_active = elem.attr('xfory_active');
+    var termin_promo = elem.attr('termin_promo');
+    if(xfory_active == 1){
+        cover_bg.addClass("cover-xfory");
+    }else{
+        cover_bg.removeClass("cover-xfory");
+    };
+    
+    var shared_cover_ebook = elem.attr('shared_cover_ebook');
+    var shared_cover_audio = elem.attr('shared_cover_audio');
+    var parent = elem.parent('ul');
+    var isTester =  $(".isTester").html();
+    var link = "/zakupy/add.cgi?troya=";
+    
+    var temat = $(this).attr('temat');
+
+    if (temat){
+        link = "/bannerclick-tematy-"+temat+"-"+ids+"/zakupy/add.cgi?id=";
+    }
+
+    var content ="";
+    var klasy = "";
+    var contentNotify = "";
+    $("#"+idspanel).siblings('.powiadomMnie').replaceWith(contentNotify);
+
+    if(status == 0){
+        content = "Niedostępna";
+        klasy="price";
+    }
+    else if(status == 1){
+        if(price < constprice){
+            link+=troya;
+
+            if(isTester == 1){
+
+                content="<a class = \"addToCart\" troya=\""+troya+"\" rel=\"nofollow\"><ins> "+price.toFixed(2)+" zł </ins></a>\n<del><span style='padding-right:5px;'>" +constprice.toFixed(2)+"zł</span> (-" + oszczedzasz + "%)</del>";
+            }
+            else{
+                content="<a href=\""+link+"\" rel=\"nofollow\"><ins> "+price.toFixed(2)+" zł </ins></a>\n<del><span style='padding-right:5px;'>" +constprice.toFixed(2)+"zł</span> (-" + oszczedzasz + "%)</del>";
+            }
+            klasy="price price-incart";
+        }
+        else{
+            link += troya;
+            if(isTester == 1){
+                content ="<a class = \"addToCart\"  troya=\""+troya+"\" rel=\"nofollow\"> "+constprice.toFixed(2)+" zł </a>";
+            }
+            else{
+                content="<a href=\""+link+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+            }
+            klasy="price price-add";
+        }
+    }
+    else if((status == 2 || status == 7) && termin_end != ''){
+        link='';
+        if(isTester == 1){
+            content="<a class = \"addToCart\" troya=\""+troya+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+        }
+        else{
+            content="<a href=\""+link+"\" rel=\"nofollow\"> "+price.toFixed(2)+" zł </a>\n";
+        }
+        content+="<time style=\"line-height:16px;\">Do " + termin_promo + "<br/>Oszczędzasz "+oszczedzasz+"%!<br/>\n W realizacji od "+termin_end+" r.</time>";
+        klasy="price price-time price-time-incart";
+    }
+    else if(status == 2){
+        content = "W przygotowaniu";
+        klasy = "price";
+        if($(".list-view-inner").length < 1){
+            contentNotify = "<a href=\"#\" class=\"powiadomMnie\" data-powiadom-info=\"infoemail\" data-powiadom-troya="+troya+" tabindex="+0+">Powiadom mnie, gdy książka będzie dostępna</a>";
+            $("#"+idspanel).after(contentNotify);
+        }
+    }
+    else if(status == 3){
+        content = "Czasowo niedostępna";
+        klasy="price";
+    }
+
+    elem.addClass("active");
+    elem.siblings().removeClass("active");
+    $("#"+idspanel).html(content);
+    $("#"+idspanel+'-points').html(pkt+" pkt");
+    if(elem.attr('lowestPrice')){
+        if(price < constprice  && status != 0  && status != 3){
+            $("#"+idspanel+'-lowestPrice').html('('+elem.attr('lowestPrice')+' najniższa cena z 30 dni)');
+        }
+        else{
+            $("#"+idspanel+'-lowestPrice').html('');
+        }
+    }
+    $("#"+idspanel).attr("class", klasy);
+
+    var bookLinks = $("."+ids+"-link");
+    if(bookLinks.length>0){
+        var href = bookLinks[0].href;
+        if(href.indexOf("#")>-1){
+            href = href.substring(0,href.indexOf("#"));
+        }
+        if(troya.length>=8){
+            href = href + "#format/" + troya[7];
+        }
+        bookLinks.attr("href", href);
+    }
+
+    // cover change
+    if(elem.hasClass('type-audiobook') || elem.hasClass('type-dvd')){
+        $("."+idspanel+"-link"+'.show-short-desc').addClass('show-short-desc-audio');
+        cover.attr('height', '145');
+        cover.attr('width', '145');
+       
+        if(cover.attr('cdcover') == "false"){
+            if(shared_cover_audio && shared_cover_audio !== ''){
+                cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+                cover.attr("src", cover.attr("src").replace(ids, shared_cover_audio+'_3'));
+                parent.attr('shared', shared_cover_audio);
+            }else if(parent.attr('shared') && parent.attr('shared') != '' && parent.attr('shared') != ids){
+                cover.attr("src", cover.attr("src").replace('sensus-brak',parent.attr('shared')));
+                cover.attr("src", cover.attr("src").replace(parent.attr('shared'), ids+'_3'));
+            }else{
+                cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+                cover.attr("src", cover.attr("src").replace(ids, ids+'_3'));
+            };
+        }else{
+            //cover.attr("src", cover.attr("src").replace('sensus-brak',ids));
+            //cover.attr("src", cover.attr("src").replace(ids, ids+'_3'));
+        }
+       // cover.attr("data-src", cover.attr("src"));
+        cover.attr('cdcover', true);
+    } else{
+        if($("."+idspanel+"-link"+'.show-short-desc').length > 0){
+            $("."+idspanel+"-link"+'.show-short-desc').removeClass('show-short-desc-audio');
+        }
+        else{
+            $("."+ids+"-link"+'.show-short-desc').removeClass('show-short-desc-audio');
+        }
+        if(cover.attr("src") && (cover_bg.parents('.list').attr('id') != 'list4')){
+            cover.attr('height', '218');
+            cover.attr('width', '145');
+        }
+        if(cover.attr('cdcover') == "true") {
+            if(shared_cover_ebook && shared_cover_ebook !== ''){
+                if(cover.attr("src").indexOf('_3') !== -1){
+                    cover.attr("src", cover.attr("src").replace(ids+'_3', shared_cover_ebook));
+                }else{
+                    cover.attr("src", cover.attr("src").replace(ids, shared_cover_ebook));
+                }
+                parent.attr('shared', shared_cover_ebook);
+            }else if(parent.attr('shared') && parent.attr('shared') != '' && parent.attr('shared') != ids){
+                if(cover.attr("src").indexOf('_3') !== -1){
+                    cover.attr("src", cover.attr("src").replace(parent.attr('shared')+'_3', ids));
+                }else{
+                    cover.attr("src", cover.attr("src").replace(parent.attr('shared'), ids));
+                }
+            }else{
+                cover.attr("src", cover.attr("src").replace(ids+'_3', ids));
+            };
+        }
+
+        cover.attr('cdcover', false);
+    }
+}
